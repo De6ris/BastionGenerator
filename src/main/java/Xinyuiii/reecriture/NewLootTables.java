@@ -395,4 +395,41 @@ public class NewLootTables {
             new LootPool(new ConstantRoll(1),
                     new ItemEntry(NewItems.NETHERITE_UPGRADE_SMITHING_TEMPLATE))
     );
+
+    public static final LootTable BASTION_TREASURE_CHEST_1_21_10 = new LootTable(
+            new LootPool(new ConstantRoll(3),
+                    new ItemEntry(Items.NETHERITE_INGOT, 15),
+                    new ItemEntry(Items.ANCIENT_DEBRIS, 10),
+                    new ItemEntry(Items.NETHERITE_SCRAP, 8),
+                    new ItemEntry(Items.ANCIENT_DEBRIS, 4).apply(version -> SetCountFunction.constant(2)),
+                    new ItemEntry(Items.DIAMOND_SWORD, 6).apply(version -> new ApplyDamageFunction(), version -> new EnchantRandomlyFunction(Items.DIAMOND_SWORD).apply(version)),
+                    new ItemEntry(NewItems.DIAMOND_SPEAR, 6).apply(version -> new ApplyDamageFunction(), version -> new EnchantRandomlyFunction(Items.DIAMOND_SWORD).apply(version)),
+                    new ItemEntry(Items.DIAMOND_CHESTPLATE, 6).apply(version -> new ApplyDamageFunction(), version -> new EnchantRandomlyFunction(Items.DIAMOND_CHESTPLATE).apply(version)),
+                    new ItemEntry(Items.DIAMOND_HELMET, 6).apply(version -> new ApplyDamageFunction(), version -> new EnchantRandomlyFunction(Items.DIAMOND_HELMET).apply(version)),
+                    new ItemEntry(Items.DIAMOND_LEGGINGS, 6).apply(version -> new ApplyDamageFunction(), version -> new EnchantRandomlyFunction(Items.DIAMOND_LEGGINGS).apply(version)),
+                    new ItemEntry(Items.DIAMOND_BOOTS, 6).apply(version -> new ApplyDamageFunction(), version -> new EnchantRandomlyFunction(Items.DIAMOND_BOOTS).apply(version)),
+                    new ItemEntry(Items.DIAMOND_SWORD, 6),
+                    new ItemEntry(NewItems.DIAMOND_SPEAR, 6),
+                    new ItemEntry(Items.DIAMOND_CHESTPLATE, 5),
+                    new ItemEntry(Items.DIAMOND_HELMET, 5),
+                    new ItemEntry(Items.DIAMOND_BOOTS, 5),
+                    new ItemEntry(Items.DIAMOND_LEGGINGS, 5),
+                    new ItemEntry(Items.DIAMOND, 5).apply(version -> SetCountFunction.uniform(2.0F, 6.0F)),
+                    new ItemEntry(Items.ENCHANTED_GOLDEN_APPLE, 2)),
+            new LootPool(new UniformRoll(3.0F, 4.0F),
+                    new ItemEntry(Items.SPECTRAL_ARROW).apply(version -> SetCountFunction.uniform(12.0F, 25.0F)),
+                    new ItemEntry(Items.GOLD_BLOCK).apply(version -> SetCountFunction.uniform(2.0F, 5.0F)),
+                    new ItemEntry(Items.IRON_BLOCK).apply(version -> SetCountFunction.uniform(2.0F, 5.0F)),
+                    new ItemEntry(Items.GOLD_INGOT).apply(version -> SetCountFunction.uniform(3.0F, 9.0F)),
+                    new ItemEntry(Items.IRON_INGOT).apply(version -> SetCountFunction.uniform(3.0F, 9.0F)),
+                    new ItemEntry(Items.CRYING_OBSIDIAN).apply(version -> SetCountFunction.uniform(3.0F, 5.0F)),
+                    new ItemEntry(Items.QUARTZ).apply(version -> SetCountFunction.uniform(8.0F, 23.0F)),
+                    new ItemEntry(Items.GILDED_BLACKSTONE).apply(version -> SetCountFunction.uniform(5.0F, 15.0F)),
+                    new ItemEntry(Items.MAGMA_CREAM).apply(version -> SetCountFunction.uniform(3.0F, 8.0F))),
+            new LootPool(new ConstantRoll(1),
+                    new EmptyEntry(11),
+                    new ItemEntry(NewItems.SNOUT_ARMOR_TRIM_SMITHING_TEMPLATE)),
+            new LootPool(new ConstantRoll(1),
+                    new ItemEntry(NewItems.NETHERITE_UPGRADE_SMITHING_TEMPLATE))
+    );
 }

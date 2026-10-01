@@ -1,8 +1,12 @@
 package Xinyuiii.properties;
 
-import java.util.*;
-
+import Xinyuiii.enumType.BastionType;
+import Xinyuiii.enumType.PoolType;
+import Xinyuiii.reecriture.BastionPools.BastionStructureLoot;
+import Xinyuiii.reecriture.BastionPools.BastionStructureSize;
+import Xinyuiii.reecriture.BastionPools.JigsawBlock;
 import Xinyuiii.reecriture.NewDecoratorRandom;
+import Xinyuiii.reecriture.VoxelShape;
 import com.seedfinding.mccore.rand.ChunkRand;
 import com.seedfinding.mccore.util.block.BlockBox;
 import com.seedfinding.mccore.util.block.BlockDirection;
@@ -17,12 +21,7 @@ import com.seedfinding.mcfeature.loot.LootContext;
 import com.seedfinding.mcfeature.loot.LootTable;
 import com.seedfinding.mcfeature.loot.item.ItemStack;
 
-import Xinyuiii.enumType.BastionType;
-import Xinyuiii.enumType.PoolType;
-import Xinyuiii.reecriture.VoxelShape;
-import Xinyuiii.reecriture.BastionPools.BastionStructureLoot;
-import Xinyuiii.reecriture.BastionPools.BastionStructureSize;
-import Xinyuiii.reecriture.BastionPools.JigsawBlock;
+import java.util.*;
 
 public class BastionGenerator {
     private List<Piece> pieces;
@@ -114,15 +113,17 @@ public class BastionGenerator {
             for (Pair<BPos, LootTable> chest : chestsPos) {
                 CPos chunk = chest.getFirst().toChunkPos();
                 long populationSeed = rand.getPopulationSeed(worldSeed, chunk.getX() << 4, chunk.getZ() << 4);
-                if (version.isBetween(MCVersion.v1_16,MCVersion.v1_18_2)) {
-                    rand.setDecoratorSeed(populationSeed,12,4);
-                }
-                else if (version.isBetween(MCVersion.v1_19,MCVersion.v1_19_2)) {
-                    rand.setDecoratorSeed(populationSeed,13,4);
-                }
-                else if (version.isNewerOrEqualTo(MCVersion.v1_19_3)) {
-                    rand.setDecoratorSeed(populationSeed,0,4);
-                }
+//                if (version.isBetween(MCVersion.v1_16,MCVersion.v1_18_2)) {
+//                    rand.setDecoratorSeed(populationSeed,12,4);
+//                }
+//                else if (version.isBetween(MCVersion.v1_19,MCVersion.v1_19_2)) {
+//                    rand.setDecoratorSeed(populationSeed,13,4);
+//                }
+//                else if (version.isNewerOrEqualTo(MCVersion.v1_19_3)) {
+//                    rand.setDecoratorSeed(populationSeed,0,4);
+//                }
+                rand.setDecoratorSeed(populationSeed, 18, 4);// 26.3+
+                // TODO version switch
                 if (chunkPos.contains(chunk)) {
                     int num = Collections.frequency(chunkPos, chunk);
                     for (int i = 0; i < num; i++) {
@@ -162,74 +163,6 @@ public class BastionGenerator {
             chunkPos.add(chunk);
         }
         return result;
-    }
-
-    private int getTreasureBottomGoldBlocks() {
-        if (this.type != BastionType.TREASURE) {
-            return 0;
-        }
-        String bottom = null;
-        for (Piece piece : pieces) {
-            if (piece.name.contains("treasure/bases/centers/center")) {
-                bottom = piece.name;
-                break;
-            }
-        }
-        assert bottom != null;
-        if (bottom.endsWith("0")) return 19;
-        if (bottom.endsWith("1")) return 12;
-        if (bottom.endsWith("2")) return 16;
-        if (bottom.endsWith("3")) return 13;
-        return 0;
-    }
-
-    public List<BPos> getVariableGoldBlocks() {
-        List<Pair<BPos, Float>> goldPositions = new ArrayList<>();
-        ChunkRand rand = new ChunkRand();
-        for (Piece piece : pieces) {
-            if (!BastionStructureLoot.STRUCTURE_VARIABLE_GOLD_OFFSETS.containsKey(piece.name)) continue;
-            for (BPos offset : BastionStructureLoot.STRUCTURE_VARIABLE_GOLD_OFFSETS.get(piece.name).getFirst()) {
-                goldPositions.add(new Pair<>(piece.pos.add(piece.getTransformedPos(offset, piece.rotation)),
-                        BastionStructureLoot.STRUCTURE_VARIABLE_GOLD_OFFSETS.get(piece.name).getSecond()));
-            }
-        }
-        return goldPositions.stream().map(pos -> {
-            rand.setPositionSeed(pos.getFirst(), this.version);
-            return rand.nextFloat() < pos.getSecond() ? null : pos.getFirst();
-        }).filter(Objects::nonNull).toList();
-    }
-
-    public int getFixedGoldBlocks() {
-        return switch (type) {
-            case HOUSING -> 17;//9bottom, 3middle, 4leftTower, 1leftTowerMiddle
-            case STABLES -> 0;
-            case TREASURE -> 4 + getTreasureBottomGoldBlocks();//2bridge, 2chestRoom, bottom
-            case BRIDGE -> 16;//16chalice
-        };
-    }
-
-    public int getTotalGoldIngots() {
-        int chestGold = 0;
-        for (Pair<BPos, List<ItemStack>> chest : generateLoot()) {
-            for (ItemStack stack : chest.getSecond()) {
-                if (stack.getItem().getName().equals("gold_block")) chestGold += stack.getCount() * 9;
-                if (stack.getItem().getName().equals("gold_ingot")) chestGold += stack.getCount();
-            }
-        }
-        return chestGold + getFixedGoldBlocks() * 9 + getVariableGoldBlocks().size() * 9;
-    }
-
-    public int[] getStableInfo() {
-        if (this.type != BastionType.STABLES) {
-            return null;
-        }
-        int tripleRampart = 0;
-        int goodBottom = 0;
-        for (Piece piece : pieces) {
-            if (piece.name.equals("hoglin_stable/ramparts/ramparts_1")) tripleRampart++;
-            if (piece.name.equals("hoglin_stable/walls/side_wall_1")) goodBottom++;
-        }
-        return new int[]{tripleRampart, goodBottom};
     }
 
     static public class Piece {

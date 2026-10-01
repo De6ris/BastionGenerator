@@ -3,9 +3,10 @@ plugins {
     id 'application'
     id 'maven-publish'
 }
-archivesBaseName = 'Xinyuiii'
+
 group = 'Xinyuiii'
-version '1.0-SNAPSHOT'
+version = '0.0.1'
+
 repositories {
     mavenCentral()
     maven {
@@ -18,20 +19,23 @@ repositories {
         url "https://www.jitpack.io"
     }
 }
-application {
-    mainClass = "Xinyuiii.properties.Main"
-}
+
 dependencies {
-    implementation('com.seedfinding:mc_feature:1.171.7')
-    implementation('com.seedfinding:mc_math:1.171.0')
-    implementation('com.seedfinding:mc_noise:1.171.1')
-    implementation('com.seedfinding:mc_reversal:1.171.1')
-    implementation('com.seedfinding:mc_terrain:1.171.1')
-    implementation('com.seedfinding:mc_seed:1.171.2')
-    implementation('com.seedfinding:mc_core:1.200.0')
-    implementation('com.seedfinding:mc_biome:1.171.1')
-    implementation 'com.seedfinding:latticg:1.06@jar'
-    implementation 'junit:junit:4.13.1'
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    implementation('org.jspecify:jspecify:1.0.0')
+
+    implementation('com.seedfinding:mc_math:LATEST')
+    implementation('com.seedfinding:mc_seed:LATEST')
+    implementation('com.seedfinding:mc_core:LATEST')
+    implementation('com.seedfinding:mc_terrain:LATEST')
+    implementation('com.seedfinding:mc_biome:LATEST')
+    implementation('com.seedfinding:mc_feature:LATEST')
+    implementation('com.seedfinding:mc_reversal:LATEST')
+    implementation('com.seedfinding:mc_noise:LATEST')
+    implementation('com.seedfinding:latticg:1.06@jar')
 }
 test {
     useJUnitPlatform()

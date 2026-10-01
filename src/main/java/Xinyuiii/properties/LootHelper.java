@@ -57,9 +57,9 @@ public class LootHelper {
         }).filter(Objects::nonNull).toList();
     }
 
-    public static int getTotalGoldIngots(BastionGenerator generator) {
+    public static int getTotalGoldIngots(BastionGenerator generator, List<Pair<BPos, List<ItemStack>>> loot) {
         int chestGold = 0;
-        for (Pair<BPos, List<ItemStack>> chest : generator.generateLoot()) {
+        for (Pair<BPos, List<ItemStack>> chest : loot) {
             for (ItemStack stack : chest.getSecond()) {
                 if (stack.getItem().getName().equals("gold_block")) chestGold += stack.getCount() * 9;
                 if (stack.getItem().getName().equals("gold_ingot")) chestGold += stack.getCount();

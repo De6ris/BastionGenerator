@@ -1,6 +1,9 @@
 package Xinyuiii.reecriture;
 
-public class NewDecoratorRandom {
+import com.seedfinding.mccore.rand.ChunkRand;
+import com.seedfinding.mccore.version.MCVersion;
+
+public class NewDecoratorRandom extends ChunkRand {
     private long seedLo, seedHi;
 
     public void setSeed(long seed0, long seed1) {
@@ -18,6 +21,7 @@ public class NewDecoratorRandom {
         return l ^ l >>> 31;
     }
 
+    @Override
     public void setSeed(long l) {
         long l2 = l ^ 0x6A09E667F3BCC909L;
         long l3 = l2 - 7046029254386353131L;
@@ -33,22 +37,26 @@ public class NewDecoratorRandom {
         return l3;
     }
 
+    @Override
     public long nextLong() {
-        int a_ = (int)(this.xoroNextLong() >> 32);
-        int b = (int)(this.xoroNextLong() >> 32);
-        long a = (long)a_ << 32;
-        return a + (long)b;
+        int a_ = (int) (this.xoroNextLong() >> 32);
+        int b = (int) (this.xoroNextLong() >> 32);
+        long a = (long) a_ << 32;
+        return a + (long) b;
     }
 
-    public long getPopulationSeed(long worldseed, int chunkOriginX, int chunkOriginZ) {
-        this.setSeed(worldseed);
+    @Override
+    public long setPopulationSeed(long worldSeed, int chunkOriginX, int chunkOriginZ, MCVersion version) {
+        this.setSeed(worldSeed);
         long a = this.nextLong() | 1L;
         long b = this.nextLong() | 1L;
-        return (long)chunkOriginX * a + (long)chunkOriginZ * b ^ worldseed;
+        return (long) chunkOriginX * a + (long) chunkOriginZ * b ^ worldSeed;
     }
 
-    public void setDecoratorSeed(long populationSeed, int index, int step) {
-        long decoratorSeed = populationSeed + (long)index + (10000L * step);
+    @Override
+    public long setDecoratorSeed(long populationSeed, int salt, MCVersion version) {
+        long decoratorSeed = populationSeed + salt;
         this.setSeed(decoratorSeed);
+        return decoratorSeed;
     }
 }

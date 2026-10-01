@@ -87,15 +87,7 @@ public class BastionGenerator {
         List<Pair<BPos, List<ItemStack>>> result = new ArrayList<>();
         List<Pair<BPos, LootTable>> chestsPos = new ArrayList<>();
         for (Piece p : pieces) {
-            List<LootTable> tables = BastionStructureLoot.STRUCTURE_LOOT_1_21_10.get(p.name);
-//            if (version.isBetween(MCVersion.v1_16, MCVersion.v1_16_1)) {
-//                tables = BastionStructureLoot.STRUCTURE_LOOT_1_16_0.get(p.name);
-//            } else if (version.isBetween(MCVersion.v1_16_2, MCVersion.v1_19_4)) {
-//                tables = BastionStructureLoot.STRUCTURE_LOOT_1_16_2.get(p.name);
-//            } else {
-//                tables = BastionStructureLoot.STRUCTURE_LOOT_1_20_0.get(p.name);
-//            }
-            // TODO enable this when mccore supports
+            List<LootTable> tables = VersionDifference.getLootTable(version, p.name);
             int size = tables.size();
             if (size != 0) {
                 List<BPos> pos = new ArrayList<>();
@@ -108,44 +100,17 @@ public class BastionGenerator {
             }
         }
         List<CPos> chunkPos = new ArrayList<>();
+        ChunkRand rand;
         if (version.isNewerOrEqualTo(MCVersion.v1_18)) {
-            NewDecoratorRandom rand = new NewDecoratorRandom();
-            for (Pair<BPos, LootTable> chest : chestsPos) {
-                CPos chunk = chest.getFirst().toChunkPos();
-                long populationSeed = rand.getPopulationSeed(worldSeed, chunk.getX() << 4, chunk.getZ() << 4);
-//                if (version.isBetween(MCVersion.v1_16,MCVersion.v1_18_2)) {
-//                    rand.setDecoratorSeed(populationSeed,12,4);
-//                }
-//                else if (version.isBetween(MCVersion.v1_19,MCVersion.v1_19_2)) {
-//                    rand.setDecoratorSeed(populationSeed,13,4);
-//                }
-//                else if (version.isNewerOrEqualTo(MCVersion.v1_19_3)) {
-//                    rand.setDecoratorSeed(populationSeed,0,4);
-//                }
-                rand.setDecoratorSeed(populationSeed, 18, 4);// 26.3+
-                // TODO version switch
-                if (chunkPos.contains(chunk)) {
-                    int num = Collections.frequency(chunkPos, chunk);
-                    for (int i = 0; i < num; i++) {
-                        rand.nextLong();
-                    }
-                    LootContext context = new LootContext(rand.nextLong(), version);
-                    List<ItemStack> items = chest.getSecond().generate(context);
-                    result.add(new Pair<>(chest.getFirst(), items));
-                    chunkPos.add(chunk);
-                    continue;
-                }
-                LootContext context = new LootContext(rand.nextLong(), version);
-                List<ItemStack> items = chest.getSecond().generate(context);
-                result.add(new Pair<>(chest.getFirst(), items));
-                chunkPos.add(chunk);
-            }
-            return result;
+            rand = new NewDecoratorRandom();
+        } else {
+            rand = new ChunkRand();
         }
-        ChunkRand rand = new ChunkRand();
         for (Pair<BPos, LootTable> chest : chestsPos) {
             CPos chunk = chest.getFirst().toChunkPos();
-            rand.setDecoratorSeed(worldSeed, chunk.getX() * 16, chunk.getZ() * 16, 40012, version);
+            long populationSeed = rand.setPopulationSeed(worldSeed, chunk.getX() << 4, chunk.getZ() << 4, version);
+            int salt = VersionDifference.getSalt(version);
+            rand.setDecoratorSeed(populationSeed, salt, version);
             if (chunkPos.contains(chunk)) {
                 int num = Collections.frequency(chunkPos, chunk);
                 for (int i = 0; i < num; i++) {
